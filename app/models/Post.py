@@ -1,7 +1,7 @@
 from datetime import datetime
 from app.db import Base 
 from .Vote import Vote
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, select, func
 from sqlalchemy.orm import relationship, column_property
 
 class Post(Base):
@@ -15,4 +15,7 @@ class Post(Base):
     user = relationship('User')
     comments = relationship('Comment', cascade='all,delete')
     votes = relationship('Vote', cascade='all,delete')
-    vote_count = column_property(func.count(Vote.id).label('vote_count'))
+    vote_count = Column(Integer, default=0)
+
+    def __repr__(self):
+        return f"<Post(id={self.id}, title='{self.title}')>"
