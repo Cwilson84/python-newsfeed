@@ -1,6 +1,6 @@
 from datetime import datetime
 from app.db import Base 
-from .Vote import Vote
+from .Vote import Vote  # Moved import here
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, select, func
 from sqlalchemy.orm import relationship, column_property
 
@@ -14,8 +14,11 @@ class Post(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     user = relationship('User')
     comments = relationship('Comment', cascade='all,delete')
-    votes = relationship('Vote', cascade='all,delete')
-    vote_count = Column(Integer, default=0)
+    votes = relationship('Vote', backref='post', cascade='all,delete')
+    
+    @property
+    def vote_count(self):
+        return len(self.votes)
 
     def __repr__(self):
         return f"<Post(id={self.id}, title='{self.title}')>"
